@@ -118,20 +118,34 @@ api_expose_admin('browser_redirect_save', function () {
 
 event_bind('mw.controller.index', function () {
     $url_segment = mw()->url_manager->string();
+    $current = mw()->url_manager->current();
     $rdata = get_active_redirect($url_segment);
+    $url_query = parse_url($current, PHP_URL_QUERY);
+    $rdata_c = (null !== $url_query) ? get_active_redirect($url_segment . '?' . $url_query) : false;
+    $user_agent = false;
+    $browser_name = false;
 
-    /**
-     * ToDo: handle params
-     */
+    $rdata = (false !== $rdata) ? $rdata : $rdata_c;
 
     if (is_array($rdata) && !empty($rdata)) {
-        header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
-        header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-        if ($rdata['redirect_code']) {
-            header('HTTP/1.1 ' . $rdata['redirect_code']);
+        if (isset($_SERVER['HTTP_USER_AGENT'])) {
+            $user_agent = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
         }
-        header('Location: ' . site_url() . $rdata['redirect_to_url']);
-        exit;
+
+        if ($user_agent) {
+            $browser_name = get_browser_name($user_agent);
+        }
+
+        if (empty($rdata['redirect_browsers']) || (!empty($browser_name) && in_array($browser_name, explode(',', $rdata['redirect_browsers'])))) {
+            header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+            header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+            if ($rdata['redirect_code']) {
+                header('HTTP/1.1 ' . $rdata['redirect_code']);
+            }
+
+            header('Location: ' . site_url() . $rdata['redirect_to_url']);
+            exit;
+        }
     }
 });
 
