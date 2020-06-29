@@ -10,17 +10,27 @@ api_expose_admin('browser_redirect/process_import_file', function($params) {
 
     $file = media_uploads_path() . '/'. $params['name'];
     $file = normalize_path($file, false);
+    
+    $rows = \Microweber\Utils\Backup\Exporters\SpreadsheetHelper::newSpreadsheet($file)->getRows();
 
-    $xlsxRead = new \Microweber\Utils\Backup\Readers\XlsxReader($file);
-    $readData = $xlsxRead->readData();
-
-    if (isset($readData['content']) && !empty($readData['content'])) {
-        $linksFromXlsx = $readData['content'];
-        foreach ($linksFromXlsx as $link) {
-            var_dump($link);
+    if (!empty($rows)) {
+        $linksForSave = [];
+        foreach ($rows as $row) {
+            $linksForSave[] = [
+                'redirect_code'=>$row[0],
+                'redirect_from_url'=>$row[1],
+                'redirect_to_url'=>$row[2],
+            ];
         }
 
-        return ['success'=>'All links are imported'];
+        if (!empty($linksForSave)) {
+            $saved = [];
+            foreach ($linksForSave as $link) {
+                $saved[] = db_save('browser_redirects', $link);
+            }
+            return ['success'=> count($saved) . ' links are imported success.'];
+        }
+
     }
 
     return ['error'=>'No data found in this file.'];
