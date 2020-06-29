@@ -69,7 +69,7 @@ function get_browser_redirects($onlyActive = false)
 {
     $filter = array();
     $filter['no_cache'] = 1;
-    $filter['limit'] = 100;
+    $filter['no_limit'] = 1;
     if ($onlyActive) {
         $filter['active'] = 1;
     }
