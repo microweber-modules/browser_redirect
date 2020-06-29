@@ -8,7 +8,22 @@
 
 api_expose_admin('browser_redirect/process_import_file', function($params) {
 
-    var_dump($params);
+    $file = media_uploads_path() . '/'. $params['name'];
+    $file = normalize_path($file, false);
+
+    $xlsxRead = new \Microweber\Utils\Backup\Readers\XlsxReader($file);
+    $readData = $xlsxRead->readData();
+
+    if (isset($readData['content']) && !empty($readData['content'])) {
+        $linksFromXlsx = $readData['content'];
+        foreach ($linksFromXlsx as $link) {
+            var_dump($link);
+        }
+
+        return ['success'=>'All links are imported'];
+    }
+
+    return ['error'=>'No data found in this file.'];
 
 });
 
