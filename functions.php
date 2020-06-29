@@ -22,21 +22,12 @@ function get_browsers_options()
 function get_browser_redirects($onlyActive = false)
 {
     $filter = array();
-    $filter['no_cache'] = 1;
     $filter['limit'] = 100;
     if ($onlyActive) {
         $filter['active'] = 1;
     }
 
     return db_get('browser_redirects', $filter);
-}
-
-function get_active_redirect (string $segment) {
-    return db_get('browser_redirects', [
-        'redirect_from_url' => $segment,
-        'active' => 1,
-        'single' => true
-    ]);
 }
 
 api_expose_admin('browser_redirect_delete', function() {
@@ -60,17 +51,13 @@ api_expose_admin('browser_redirect_save', function () {
         return array('error'=>'Select redirect code.');
     }
 
-    /*
     if (!isset($_POST['redirect_browsers']) || empty($_POST['redirect_browsers'])) {
         return array('error'=>'Please select, redirect browsers.');
     }
-    */
 
     $save = array();
     if (!empty($_POST['redirect_browsers']) && is_array($_POST['redirect_browsers'])) {
         $save['redirect_browsers'] = implode(',', $_POST['redirect_browsers']);
-    } else {
-        $save['redirect_browsers'] = null;
     }
 
     if (isset($_POST['active']) && trim($_POST['active']) == 'y') {
@@ -79,77 +66,23 @@ api_expose_admin('browser_redirect_save', function () {
         $save['active'] = 0;
     }
 
-    $x_from = str_ireplace(site_url(), '', trim($_POST['redirect_from_url']));
-    $x_to = str_ireplace(site_url(), '', trim($_POST['redirect_to_url']));
-    $x_from = trim($x_from, '/');
-    $x_to = trim($x_to, '/');
-
     $save['redirect_code'] = trim($_POST['redirect_code']);
-    $save['redirect_to_url'] = $x_to;
-    $save['redirect_to_url_hash'] = md5($save['redirect_to_url']);
-    $save['redirect_from_url'] = $x_from;
-    $save['redirect_from_url_hash'] = md5($save['redirect_from_url']);
+    $save['redirect_to_url'] = trim($_POST['redirect_to_url']);
+    $save['redirect_from_url'] = trim($_POST['redirect_from_url']);
 
     if (isset($_POST['id'])) {
         $save['id'] = (int) trim($_POST['id']);
     }
 
-    /**
-     * ToDo: check for cycling
-     */
-    try {
-        $id = db_save('browser_redirects', $save);
-    } catch (\Illuminate\Database\QueryException $exception) {
-        DB::table('browser_redirects')
-            ->where([ 'redirect_from_url_hash' => $save['redirect_from_url_hash'] ])
-            ->update([
-                'redirect_to_url' => $save['redirect_to_url'],
-                'redirect_to_url_hash' => $save['redirect_to_url_hash'],
-                'redirect_code' => $save['redirect_code'],
-                'redirect_browsers' => $save['redirect_browsers']
-            ]);
+    $id = db_save('browser_redirects', $save);
 
-        return array('success' => 'Redirect updated.');
-    }
+    return array('success'=>'The browser redirect is saved.', 'id'=>$id);
 
-    return array('success' => 'The browser redirect is saved.', 'id' => $id);
 });
 
-
-event_bind('mw.controller.index', function () {
-    $url_segment = mw()->url_manager->string();
-    $current = mw()->url_manager->current();
-    $rdata = get_active_redirect($url_segment);
-    $url_query = parse_url($current, PHP_URL_QUERY);
-    $rdata_c = (null !== $url_query) ? get_active_redirect($url_segment . '?' . $url_query) : false;
-    $user_agent = false;
-    $browser_name = false;
-
-    $rdata = (false !== $rdata) ? $rdata : $rdata_c;
-
-    if (is_array($rdata) && !empty($rdata)) {
-        if (isset($_SERVER['HTTP_USER_AGENT'])) {
-            $user_agent = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
-        }
-
-        if ($user_agent) {
-            $browser_name = get_browser_name($user_agent);
-        }
-
-        if (empty($rdata['redirect_browsers']) || (!empty($browser_name) && in_array($browser_name, explode(',', $rdata['redirect_browsers'])))) {
-            header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
-            header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-            if ($rdata['redirect_code']) {
-                header('HTTP/1.1 ' . $rdata['redirect_code']);
-            }
-
-            header('Location: ' . site_url() . $rdata['redirect_to_url']);
-            exit;
-        }
-    }
-});
 
 event_bind('mw.pageview', function() {
+
     $redirectBrowsers = array();
     $redirectCode = false;
     $redirectUrl = false;
@@ -158,7 +91,6 @@ event_bind('mw.pageview', function() {
     $userAgent = false;
     $browserName = false;
     $redirects = get_browser_redirects(true);
-    $current = mw()->url_manager->current();
 
     if (empty($redirects) && !is_array($redirects)) {
         return;
@@ -220,7 +152,7 @@ event_bind('mw.pageview', function() {
         if ($redirectCode) {
             header('HTTP/1.1 ' . $redirectCode);
         }
-        header('Location: ' . site_url() . $redirectUrl);
+        header('Location: ' . $redirectUrl);
         exit;
     }
 
