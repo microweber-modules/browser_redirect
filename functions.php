@@ -6,6 +6,12 @@
  * Time: 10:26 AM
  */
 
+api_expose_admin('browser_redirect/process_import_file', function($params) {
+
+    var_dump($params);
+
+});
+
 function get_browsers_options()
 {
     $browsers = array();

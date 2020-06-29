@@ -15,7 +15,6 @@
 <script type="text/javascript">
 
     $(document).ready(function(){
-
         var uploader = mw.uploader({
             filetypes:"xlsx",
             multiple:false,
@@ -26,8 +25,7 @@
             mw.$("#mw_uploader_loading").hide();
             mw.$("#mw_uploader").show();
             mw.$("#upload_info").html("Importing links...");
-
-            process
+            processTheImportFile(data);
         });
 
         $(uploader).bind('progress', function(up, file) {
@@ -39,8 +37,16 @@
         $(uploader).bind('error', function(up, file) {
             mw.notification.error("The file is not uploaded.");
         });
-
     });
+
+    function processTheImportFile(data) {
+        mw.$("#upload_info").html("Processing...");
+
+        $.post(mw.settings.api_url + "browser_redirect/process_import_file", data)
+        .done(function( data ) {
+            mw.$("#upload_info").html("Done!");
+        });
+    }
 </script>
 <span id="mw_uploader" class="mw-ui-btn">
 <span class="ico iupload"></span>
