@@ -44,7 +44,8 @@
 
         $.post(mw.settings.api_url + "browser_redirect/process_import_file", data)
         .done(function( data ) {
-            mw.$("#upload_info").html("Done!");
+            mw.$("#upload_info").html("<b style='color:green'>Done!</b>");
+            mw.reload_module_everywhere('browser_redirect');
         });
     }
 </script>

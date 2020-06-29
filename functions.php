@@ -10,7 +10,7 @@ api_expose_admin('browser_redirect/process_import_file', function($params) {
 
     $file = media_uploads_path() . '/'. $params['name'];
     $file = normalize_path($file, false);
-    
+
     $rows = \Microweber\Utils\Backup\Exporters\SpreadsheetHelper::newSpreadsheet($file)->getRows();
 
     if (!empty($rows)) {
@@ -26,6 +26,14 @@ api_expose_admin('browser_redirect/process_import_file', function($params) {
         if (!empty($linksForSave)) {
             $saved = [];
             foreach ($linksForSave as $link) {
+
+                $link['redirect_code'] = str_replace('Redirect', '', $link['redirect_code']);
+
+                $linkComponents = parse_url($link['redirect_from_url']);
+
+                $link['redirect_from_url'] = str_replace($linkComponents['scheme'] . '://', '', $link['redirect_from_url']);
+                $link['redirect_from_url'] = str_replace($linkComponents['host'], '', $link['redirect_from_url']);
+                
                 $saved[] = db_save('browser_redirects', $link);
             }
             return ['success'=> count($saved) . ' links are imported success.'];
