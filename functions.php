@@ -31,12 +31,19 @@ api_expose_admin('browser_redirect/process_import_file', function($params) {
 
                 $linkComponents = parse_url($link['redirect_from_url']);
 
+                if (!isset($linkComponents['host']) || !isset($linkComponents['scheme'])) {
+                    continue;
+                }
+
                 $link['redirect_from_url'] = str_replace($linkComponents['scheme'] . '://', '', $link['redirect_from_url']);
                 $link['redirect_from_url'] = str_replace($linkComponents['host'], '', $link['redirect_from_url']);
-                
+
                 $saved[] = db_save('browser_redirects', $link);
             }
-            return ['success'=> count($saved) . ' links are imported success.'];
+
+            if (!empty($saved)) {
+                return ['success' => count($saved) . ' links are imported success.'];
+            }
         }
 
     }

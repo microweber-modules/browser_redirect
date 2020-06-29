@@ -1,4 +1,4 @@
-<b>Example XML Structure:</b>
+<b>Example XLSX Structure:</b>
 <table class="mw-ui-table mw-full-width" border="1" width="100%">
 <tr>
     <td>Type</td>
@@ -44,7 +44,12 @@
 
         $.post(mw.settings.api_url + "browser_redirect/process_import_file", data)
         .done(function( data ) {
-            mw.$("#upload_info").html("<b style='color:green'>Done!</b>");
+            if (data.success) {
+                mw.$("#upload_info").html("<b style='color:green'>" + data.success + "</b>");
+            }
+            if (data.error) {
+                mw.$("#upload_info").html("<b style='color:red'>" + data.error + "</b>");
+            }
             mw.reload_module_everywhere('browser_redirect');
         });
     }
