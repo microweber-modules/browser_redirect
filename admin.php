@@ -16,15 +16,15 @@ only_admin_access();
 <script type="text/javascript">
 
     
-    function uploadXml() {
+    function uploadRedirectsFromFile() {
         var data = {};
-        var module_id = 'upload-xml-browser-redirect';
+        var module_id = 'upload-redirects-browser-redirect';
 
         var opts = {};
         opts.width = '600';
         opts.height = '600';
 
-        uploadXmlModal = mw.tools.open_global_module_settings_modal('browser_redirect/upload_xml', module_id, opts, data);
+        uploadXmlModal = mw.tools.open_global_module_settings_modal('browser_redirect/upload_redirects', module_id, opts, data);
     }
     
     function editBrowserRedirect(id) {
@@ -57,8 +57,8 @@ only_admin_access();
             <i class="fa fa-plus"></i> &nbsp; <?php echo _e('Add new browser redirect');?>
         </a>
 
-        <a href="javascript:;" onClick="uploadXml(false)" class="mw-ui-btn mw-ui-btn-medium mw-ui-btn-notification">
-            <i class="fa fa-upload"></i> &nbsp; <?php echo _e('Upload XML');?>
+        <a href="javascript:;" onClick="uploadRedirectsFromFile(false)" class="mw-ui-btn mw-ui-btn-medium mw-ui-btn-notification">
+            <i class="fa fa-upload"></i> &nbsp; <?php echo _e('Upload Redirects From File');?>
         </a>
 
         <div class="mw-ui-box mw-ui-box-content" data-view="" style="margin-top: 15px;">

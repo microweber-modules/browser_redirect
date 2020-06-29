@@ -17,7 +17,7 @@
     $(document).ready(function(){
 
         var uploader = mw.uploader({
-            filetypes:"images,videos",
+            filetypes:"xlsx",
             multiple:false,
             element:"#mw_uploader"
         });
@@ -25,8 +25,9 @@
         $(uploader).bind("FileUploaded", function(event, data){
             mw.$("#mw_uploader_loading").hide();
             mw.$("#mw_uploader").show();
-            mw.$("#upload_info").html("");
-            alert(data.src);
+            mw.$("#upload_info").html("Importing links...");
+
+            process
         });
 
         $(uploader).bind('progress', function(up, file) {
@@ -43,6 +44,8 @@
 </script>
 <span id="mw_uploader" class="mw-ui-btn">
 <span class="ico iupload"></span>
-<span><i class="fa fa-upload"></i> Select file to upload<span id="upload_info"></span>
+<span><i class="fa fa-upload"></i> Select file to upload
 </span>
 </span>
+
+<span id="upload_info"></span>
