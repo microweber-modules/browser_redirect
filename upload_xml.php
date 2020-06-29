@@ -1,3 +1,21 @@
+
+<!--
+<a href="javascript:;" onClick="uploadXml(false)" class="mw-ui-btn mw-ui-btn-medium mw-ui-btn-notification">
+    <i class="fa fa-upload"></i> &nbsp; <?php echo _e('Upload XML');?>
+</a>
+
+ function uploadXml() {
+        var data = {};
+        var module_id = 'upload-xml-browser-redirect';
+
+        var opts = {};
+        opts.width = '600';
+        opts.height = '600';
+
+        uploadXmlModal = mw.tools.open_global_module_settings_modal('browser_redirect/upload_xml', module_id, opts, data);
+    }
+--->
+
 <b>Example XML Structure:</b>
 <table class="mw-ui-table mw-full-width" border="1" width="100%">
 <tr>
