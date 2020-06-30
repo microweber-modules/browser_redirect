@@ -63,7 +63,7 @@ if (isset($_GET['id'])) {
             <div class="mw-ui-field-holder">
                 <label class="mw-ui-label">Redirect From URL Address</label>
                 <div class="mw-ui-btn-nav">
-                    <a href="javascript:;" class="mw-ui-btn"><?php echo url('');?></a>
+                    <a href="javascript:;" class="mw-ui-btn"><?php echo url('');?>/</a>
                     <input type="text" name="redirect_from_url" class="mw-ui-field" value="<?php echo $redirect_from_url;?>">
                 </div>
                 <div style="margin-top:5px;color:#575757;">Add <b>*</b> if you want to global redirect all website pages.</div>

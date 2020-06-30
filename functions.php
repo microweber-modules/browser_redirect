@@ -6,6 +6,11 @@
  * Time: 10:26 AM
  */
 
+api_expose_admin('browser_redirect_delete_all', function($params) {
+    DB::table('browser_redirects')->truncate();
+    Cache::tags('browser_redirects')->flush();
+});
+
 api_expose_admin('browser_redirect/process_import_file', function($params) {
 
     $file = media_uploads_path() . '/'. $params['name'];
@@ -178,33 +183,37 @@ api_expose_admin('browser_redirect_save', function () {
 
 
 event_bind('mw.controller.index', function () {
-    $url_segment = mw()->url_manager->string();
-    $current = mw()->url_manager->current();
-    $rdata = get_active_redirect($url_segment);
-    $url_query = parse_url($current, PHP_URL_QUERY);
-    $rdata_c = (null !== $url_query) ? get_active_redirect($url_segment . '?' . $url_query) : false;
-    $user_agent = false;
-    $browser_name = false;
 
-    $rdata = (false !== $rdata) ? $rdata : $rdata_c;
+    $currentUri = mw()->url_manager->current();
+    $currentUri = str_replace(site_url(), '', $currentUri);
 
-    if (is_array($rdata) && !empty($rdata)) {
+/*    // Remove first
+    if (substr($currentUri, 0, 1) == '/') {
+        $currentUri = substr($currentUri, 1);
+    }*/
+
+    $redirectData = get_active_redirect($currentUri);
+
+    $userAgent = false;
+    $browserName = false;
+
+    if (is_array($redirectData) && !empty($redirectData)) {
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
-            $user_agent = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
+            $userAgent = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
         }
 
-        if ($user_agent) {
-            $browser_name = get_browser_name($user_agent);
+        if ($userAgent) {
+            $browserName = get_browser_name($userAgent);
         }
 
-        if (empty($rdata['redirect_browsers']) || (!empty($browser_name) && in_array($browser_name, explode(',', $rdata['redirect_browsers'])))) {
+        if (empty($redirectData['redirect_browsers']) || (!empty($browserName) && in_array($browserName, explode(',', $redirectData['redirect_browsers'])))) {
             header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
             header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
-            if ($rdata['redirect_code']) {
-                header('HTTP/1.1 ' . $rdata['redirect_code']);
+            if ($redirectData['redirect_code']) {
+                header('HTTP/1.1 ' . $redirectData['redirect_code']);
             }
 
-            header('Location: ' . site_url() . $rdata['redirect_to_url']);
+            header('Location: ' . site_url() . $redirectData['redirect_to_url']);
             exit;
         }
     }

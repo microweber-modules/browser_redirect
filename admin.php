@@ -39,6 +39,15 @@ only_admin_access();
         editBrowserRedirectModal = mw.tools.open_global_module_settings_modal('browser_redirect/edit_form', module_id, opts, data);
     }
 
+    function deleteAll() {
+        mw.tools.confirm('<?php _e('Do you want to delete all browser redirects?'); ?>', function() {
+            data = {};
+            $.post(mw.settings.api_url + 'browser_redirect_delete_all', data, function(resp) {
+                mw.reload_module('browser_redirect');
+            });
+        });
+    }
+    
     function deleteBrowserRedirect(id) {
 
         $.post("<?php echo api_url('browser_redirect_delete');?>", {id:id}, function(data){
@@ -66,7 +75,7 @@ only_admin_access();
             <table class="mw-ui-table mw-full-width mw-ui-table-basic">
                 <thead>
                 <tr>
-                    <th><?php echo _e('Redirect from URL');?></th>
+                    <th style="width:300px;"><?php echo _e('Redirect from URL');?></th>
                     <th><?php echo _e('Redirect to URL');?></th>
                     <th><?php echo _e('Redirect Browsers');?></th>
                     <th><?php echo _e('Redirect code');?></th>
@@ -93,8 +102,8 @@ only_admin_access();
                         <?php endif; ?>
                     </td>
                     <td>
-                        <a href="javascript:;" onClick="editBrowserRedirect('<?php echo $browserRedirect['id']; ?>')" class="mw-ui-btn mw-ui-btn-medium"><?php echo _e('Edit');?></a>
-                        <a href="javascript:;" onClick="deleteBrowserRedirect('<?php echo $browserRedirect['id']; ?>')" class="mw-ui-btn mw-ui-btn-medium"><?php echo _e('Delete');?></a>
+                        <a href="javascript:;" onClick="editBrowserRedirect('<?php echo $browserRedirect['id']; ?>')" class="mw-ui-btn mw-ui-btn-medium"><span class="mw-icon-pen"></span> &nbsp; <?php echo _e('Edit');?></a>
+                        <a href="javascript:;" onClick="deleteBrowserRedirect('<?php echo $browserRedirect['id']; ?>')" class="mw-ui-btn mw-ui-btn-medium"><span class="fa fa-times"></span> &nbsp; <?php echo _e('Delete');?></a>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -106,6 +115,8 @@ only_admin_access();
 
                 </tbody>
             </table>
+
+            <a class="mw-ui-btn mw-ui-btn-medium" style="float:right;margin-top:15px;margin-right:22px;margin-bottom: 15px" onclick="deleteAll()"><span class="fa fa-times"></span> &nbsp;Delete all redirects</a>
         </div>
 
     </div>
