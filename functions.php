@@ -37,6 +37,7 @@ api_expose_admin('browser_redirect/process_import_file', function($params) {
 
                 $link['redirect_from_url'] = str_replace($linkComponents['scheme'] . '://', '', $link['redirect_from_url']);
                 $link['redirect_from_url'] = str_replace($linkComponents['host'], '', $link['redirect_from_url']);
+                $link['active'] = 1;
 
                 $saved[] = db_save('browser_redirects', $link);
             }
