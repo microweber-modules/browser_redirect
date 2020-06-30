@@ -39,11 +39,25 @@ api_expose_admin('browser_redirect/process_import_file', function($params) {
                 $link['redirect_from_url'] = str_replace($linkComponents['host'], '', $link['redirect_from_url']);
                 $link['active'] = 1;
 
+                $findLink = db_get('browser_redirects', [
+                    'no_cache'=>1,
+                    'single'=>1,
+                    'redirect_from_url_hash'=>md5($link['redirect_from_url']),
+                    'redirect_to_url_hash'=>md5($link['redirect_to_url']),
+                ]);
+
+                if ($findLink) {
+                    $link['id'] = $findLink['id'];
+                }
+
+                $link['redirect_from_url_hash'] = md5($link['redirect_from_url']);
+                $link['redirect_to_url_hash'] = md5($link['redirect_to_url']);
+
                 $saved[] = db_save('browser_redirects', $link);
             }
 
             if (!empty($saved)) {
-                return ['success' => count($saved) . ' links are imported success.'];
+                return ['success' => count($saved) . ' links are saved success.'];
             }
         }
 
