@@ -16,7 +16,7 @@ $config['ui'] = false;
 $config['ui_admin'] = true;
 // $config['categories'] = "other";
 $config['position'] = "100";
-$config['version'] = 0.01;
+$config['version'] = 0.02;
 
 $config['tables'] = array(
     'browser_redirects' => array(
