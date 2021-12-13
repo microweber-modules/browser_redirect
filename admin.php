@@ -15,7 +15,7 @@ only_admin_access();
 
 <script type="text/javascript">
 
-    
+
     function uploadRedirectsFromFile() {
         var data = {};
         var module_id = 'upload-redirects-browser-redirect';
@@ -26,7 +26,7 @@ only_admin_access();
 
         uploadXmlModal = mw.tools.open_global_module_settings_modal('browser_redirect/upload_redirects', module_id, opts, data);
     }
-    
+
     function editBrowserRedirect(id) {
         var data = {};
         data.id = id;
@@ -47,7 +47,7 @@ only_admin_access();
             });
         });
     }
-    
+
     function deleteBrowserRedirect(id) {
 
         $.post("<?php echo api_url('browser_redirect_delete');?>", {id:id}, function(data){
@@ -59,28 +59,38 @@ only_admin_access();
 
 </script>
 
-<div id="mw-admin-content" class="admin-side-content">
-    <div class="mw_edit_page_default" id="mw_edit_page_left">
+<div class="card style-1 mb-3">
+    <div class="card-header">
+        <?php $module_info = module_info($params['module']); ?>
+        <h5>
+            <?php if (isset($module_info['icon'])):?>
+                <img src="<?php echo $module_info['icon']; ?>" class="module-icon-svg-fill"/>
+                <strong><?php echo _e($module_info['name']); ?></strong>
+            <?php endif; ?>
+        </h5>
+    </div>
 
-        <a href="javascript:;" onClick="editBrowserRedirect(false)" class="mw-ui-btn mw-ui-btn-medium mw-ui-btn-notification">
+    <div class="card-body pt-3">
+
+        <a href="javascript:;" onClick="editBrowserRedirect(false)" class="btn btn-primary">
             <i class="fa fa-plus"></i> &nbsp; <?php echo _e('Add new browser redirect');?>
         </a>
 
-        <a href="javascript:;" onClick="uploadRedirectsFromFile(false)" class="mw-ui-btn mw-ui-btn-medium mw-ui-btn-notification">
+        <a href="javascript:;" onClick="uploadRedirectsFromFile(false)" class="btn btn-primary">
             <i class="fa fa-upload"></i> &nbsp; <?php echo _e('Upload Redirects From File');?>
         </a>
 
-        <div class="mw-ui-box mw-ui-box-content" data-view="" style="margin-top: 15px;">
+        <div style="margin-top: 15px;">
 
-            <table class="mw-ui-table mw-full-width mw-ui-table-basic">
+            <table class="table">
                 <thead>
                 <tr>
-                    <th style="width:300px;"><?php echo _e('Redirect from URL');?></th>
+                    <th><?php echo _e('Redirect from URL');?></th>
                     <th><?php echo _e('Redirect to URL');?></th>
                     <th><?php echo _e('Redirect Browsers');?></th>
                     <th><?php echo _e('Redirect code');?></th>
                     <th><?php echo _e('Enabled');?></th>
-                    <th style="width:190px;"><?php echo _e('Action');?></th>
+                    <th><?php echo _e('Action');?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -102,8 +112,8 @@ only_admin_access();
                         <?php endif; ?>
                     </td>
                     <td>
-                        <a href="javascript:;" onClick="editBrowserRedirect('<?php echo $browserRedirect['id']; ?>')" class="mw-ui-btn mw-ui-btn-medium"><span class="mw-icon-pen"></span> &nbsp; <?php echo _e('Edit');?></a>
-                        <a href="javascript:;" onClick="deleteBrowserRedirect('<?php echo $browserRedirect['id']; ?>')" class="mw-ui-btn mw-ui-btn-medium"><span class="fa fa-times"></span> &nbsp; <?php echo _e('Delete');?></a>
+                        <a href="javascript:;" onClick="editBrowserRedirect('<?php echo $browserRedirect['id']; ?>')" class="btn btn-primary"><span class="mw-icon-pen"></span> &nbsp; <?php echo _e('Edit');?></a>
+                        <a href="javascript:;" onClick="deleteBrowserRedirect('<?php echo $browserRedirect['id']; ?>')" class="btn btn-primary"><span class="fa fa-times"></span> &nbsp; <?php echo _e('Delete');?></a>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -116,7 +126,7 @@ only_admin_access();
                 </tbody>
             </table>
 
-            <a class="mw-ui-btn mw-ui-btn-medium" style="float:right;margin-top:15px;margin-right:22px;margin-bottom: 15px" onclick="deleteAll()"><span class="fa fa-times"></span> &nbsp;Delete all redirects</a>
+            <a class="btn btn-primary" style="float:right;margin-top:15px;margin-right:22px;margin-bottom: 15px" onclick="deleteAll()"><span class="fa fa-times"></span> &nbsp;Delete all redirects</a>
         </div>
 
     </div>
