@@ -71,6 +71,15 @@ api_expose_admin('browser_redirect/process_import_file', function($params) {
         $saved = [];
         foreach ($linksForSave as $link) {
 
+            $x_from = str_ireplace(site_url(), '', trim($link['redirect_from_url']));
+            $x_from = trim($x_from, '/');
+
+            $x_to = str_ireplace(site_url(), '', trim($link['redirect_to_url']));
+            $x_to = trim($x_to, '/');
+
+            $link['redirect_from_url'] = $x_from;
+            $link['redirect_to_url'] = $x_to;
+            
             $link['redirect_code'] = str_replace('Redirect', '', $link['redirect_code']);
             $link['active'] = 1;
 
