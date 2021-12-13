@@ -79,7 +79,7 @@ api_expose_admin('browser_redirect/process_import_file', function($params) {
 
             $link['redirect_from_url'] = $x_from;
             $link['redirect_to_url'] = $x_to;
-            
+
             $link['redirect_code'] = str_replace('Redirect', '', $link['redirect_code']);
             $link['active'] = 1;
 
@@ -250,7 +250,11 @@ event_bind('mw.controller.index', function () {
                 header('HTTP/1.1 ' . $redirectData['redirect_code']);
             }
 
-            header('Location: ' . site_url() . $redirectData['redirect_to_url']);
+            if (filter_var($redirectData['redirect_to_url'], FILTER_VALIDATE_URL)) {
+                header('Location: ' . $redirectData['redirect_to_url']);
+            } else {
+                header('Location: ' . site_url() . $redirectData['redirect_to_url']);
+            }
             exit;
         }
     }
@@ -322,12 +326,19 @@ event_bind('mw.pageview', function() {
     }
 
     if ($startRedirecting && $redirectUrl) {
+
         header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
         header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+
         if ($redirectCode) {
             header('HTTP/1.1 ' . $redirectCode);
         }
-        header('Location: ' . site_url() . $redirectUrl);
+
+        if (filter_var($redirectUrl, FILTER_VALIDATE_URL)) {
+            header('Location: ' . $redirectUrl);
+        } else {
+            header('Location: ' . site_url() . $redirectUrl);
+        }
         exit;
     }
 
