@@ -21,7 +21,7 @@ only_admin_access();
         var module_id = 'upload-redirects-browser-redirect';
 
         var opts = {};
-        opts.width = '600';
+        opts.width = '800';
         opts.height = '600';
 
         uploadXmlModal = mw.tools.open_global_module_settings_modal('browser_redirect/upload_redirects', module_id, opts, data);
@@ -33,7 +33,7 @@ only_admin_access();
         var module_id = 'edit-browser-redirect-' + id;
 
         var opts = {};
-        opts.width = '500';
+        opts.width = '800';
         opts.height = '600';
 
         editBrowserRedirectModal = mw.tools.open_global_module_settings_modal('browser_redirect/edit_form', module_id, opts, data);
