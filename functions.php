@@ -27,7 +27,7 @@ api_expose_admin('browser_redirect/process_import_file', function($params) {
             if ((strpos($row[0], 'Redirect') !==false) || (strpos($row[0], 'ErrorDocument') !==false)) {
                 $isValid = true;
             }
-            
+
             if ($isValid) {
                 $linksForSave[] = [
                     'redirect_code' => $row[0],
@@ -38,23 +38,40 @@ api_expose_admin('browser_redirect/process_import_file', function($params) {
         }
     }
 
-    dd($linksForSave);
+    if (empty($linksForSave)) {
 
+        // Try to parse httacess
+        $content = @file_get_contents($file);
+        $expLines = explode(PHP_EOL, $content);
+        foreach ($expLines as $line) {
+            if (empty($line)) {
+                continue;
+            }
+
+            $redirectCode = '301';
+
+            $clearRedirectCode = str_replace('Redirect 301',false, $line);
+            $clearRedirectCode = str_replace('ErrorDocument',false, $clearRedirectCode);
+            $clearRedirectCode = trim($clearRedirectCode);
+            $expLine = explode(' ', $clearRedirectCode);
+
+            if (!isset($expLine[1]) || empty($expLine[0]) || empty($expLine[1])) {
+                continue;
+            }
+
+            $linksForSave[] = [
+                'redirect_code' => $redirectCode,
+                'redirect_from_url' => $expLine[0],
+                'redirect_to_url' => $expLine[1],
+            ];
+        }
+    }
 
     if (!empty($linksForSave)) {
         $saved = [];
         foreach ($linksForSave as $link) {
 
             $link['redirect_code'] = str_replace('Redirect', '', $link['redirect_code']);
-
-            $linkComponents = parse_url($link['redirect_from_url']);
-
-            if (!isset($linkComponents['host']) || !isset($linkComponents['scheme'])) {
-                continue;
-            }
-
-            $link['redirect_from_url'] = str_replace($linkComponents['scheme'] . '://', '', $link['redirect_from_url']);
-            $link['redirect_from_url'] = str_replace($linkComponents['host'], '', $link['redirect_from_url']);
             $link['active'] = 1;
 
             $findLink = db_get('browser_redirects', [
