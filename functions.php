@@ -16,56 +16,67 @@ api_expose_admin('browser_redirect/process_import_file', function($params) {
     $file = media_uploads_path() . '/'. $params['name'];
     $file = normalize_path($file, false);
 
-    $rows = \Microweber\Utils\Backup\Exporters\SpreadsheetHelper::newSpreadsheet($file)->getRows();
-
+    $rows = \MicroweberPackages\Backup\Exporters\SpreadsheetHelper::newSpreadsheet($file)->getRows();
+    $linksForSave = [];
     if (!empty($rows)) {
-        $linksForSave = [];
         foreach ($rows as $row) {
-            $linksForSave[] = [
-                'redirect_code'=>$row[0],
-                'redirect_from_url'=>$row[1],
-                'redirect_to_url'=>$row[2],
-            ];
-        }
-
-        if (!empty($linksForSave)) {
-            $saved = [];
-            foreach ($linksForSave as $link) {
-
-                $link['redirect_code'] = str_replace('Redirect', '', $link['redirect_code']);
-
-                $linkComponents = parse_url($link['redirect_from_url']);
-
-                if (!isset($linkComponents['host']) || !isset($linkComponents['scheme'])) {
-                    continue;
-                }
-
-                $link['redirect_from_url'] = str_replace($linkComponents['scheme'] . '://', '', $link['redirect_from_url']);
-                $link['redirect_from_url'] = str_replace($linkComponents['host'], '', $link['redirect_from_url']);
-                $link['active'] = 1;
-
-                $findLink = db_get('browser_redirects', [
-                    'no_cache'=>1,
-                    'single'=>1,
-                    'redirect_from_url_hash'=>md5($link['redirect_from_url']),
-                    'redirect_to_url_hash'=>md5($link['redirect_to_url']),
-                ]);
-
-                if ($findLink) {
-                    $link['id'] = $findLink['id'];
-                }
-
-                $link['redirect_from_url_hash'] = md5($link['redirect_from_url']);
-                $link['redirect_to_url_hash'] = md5($link['redirect_to_url']);
-
-                $saved[] = db_save('browser_redirects', $link);
+            if (!isset($row[2]) || empty($row[0]) || empty($row[1]) || empty($row[2])) {
+                continue;
             }
-
-            if (!empty($saved)) {
-                return ['success' => count($saved) . ' links are saved success.'];
+            $isValid = false;
+            if ((strpos($row[0], 'Redirect') !==false) || (strpos($row[0], 'ErrorDocument') !==false)) {
+                $isValid = true;
+            }
+            
+            if ($isValid) {
+                $linksForSave[] = [
+                    'redirect_code' => $row[0],
+                    'redirect_from_url' => $row[1],
+                    'redirect_to_url' => $row[2],
+                ];
             }
         }
+    }
 
+    dd($linksForSave);
+
+
+    if (!empty($linksForSave)) {
+        $saved = [];
+        foreach ($linksForSave as $link) {
+
+            $link['redirect_code'] = str_replace('Redirect', '', $link['redirect_code']);
+
+            $linkComponents = parse_url($link['redirect_from_url']);
+
+            if (!isset($linkComponents['host']) || !isset($linkComponents['scheme'])) {
+                continue;
+            }
+
+            $link['redirect_from_url'] = str_replace($linkComponents['scheme'] . '://', '', $link['redirect_from_url']);
+            $link['redirect_from_url'] = str_replace($linkComponents['host'], '', $link['redirect_from_url']);
+            $link['active'] = 1;
+
+            $findLink = db_get('browser_redirects', [
+                'no_cache'=>1,
+                'single'=>1,
+                'redirect_from_url_hash'=>md5($link['redirect_from_url']),
+                'redirect_to_url_hash'=>md5($link['redirect_to_url']),
+            ]);
+
+            if ($findLink) {
+                $link['id'] = $findLink['id'];
+            }
+
+            $link['redirect_from_url_hash'] = md5($link['redirect_from_url']);
+            $link['redirect_to_url_hash'] = md5($link['redirect_to_url']);
+
+            $saved[] = db_save('browser_redirects', $link);
+        }
+
+        if (!empty($saved)) {
+            return ['success' => count($saved) . ' links are saved success.'];
+        }
     }
 
     return ['error'=>'No data found in this file.'];

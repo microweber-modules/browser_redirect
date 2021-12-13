@@ -16,7 +16,7 @@
 
     $(document).ready(function(){
         var uploader = mw.uploader({
-            filetypes:"xlsx",
+            filetypes:"xlsx,txt",
             multiple:false,
             element:"#mw_uploader"
         });
