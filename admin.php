@@ -82,13 +82,14 @@ only_admin_access();
 
         <div style="margin-top: 15px;">
 
-            <table class="table table-responsive">
+            <table class="table table-responsive" style="table-layout: fixed">
                 <thead>
                 <tr>
                     <th scope="col"><?php echo _e('Redirect from URL');?></th>
                     <th scope="col"><?php echo _e('Redirect to URL');?></th>
-                    <th scope="col"><?php echo _e('Redirect Browsers');?></th>
                     <th scope="col"><?php echo _e('Redirect code');?></th>
+                    <th scope="col"><?php echo _e('Redirect Browsers');?></th>
+
                     <th scope="col"><?php echo _e('Enabled');?></th>
                     <th scope="col"><?php echo _e('Action');?></th>
                 </tr>
@@ -102,8 +103,9 @@ only_admin_access();
                 <tr class="js-browser-redirect-tr-<?php echo $browserRedirect['id']; ?>">
                     <td><?php echo $browserRedirect['redirect_from_url']; ?></td>
                     <th scope="row"><?php echo $browserRedirect['redirect_to_url']; ?></th>
-                    <th scope="row"><?php echo $browserRedirect['redirect_browsers']; ?></th>
                     <th scope="row"><?php echo $browserRedirect['redirect_code']; ?></th>
+                    <th scope="row"><?php echo $browserRedirect['redirect_browsers']; ?></th>
+
                     <th scope="row">
                         <?php if ($browserRedirect['active']): ?>
                         <?php echo _e('Yes');?>
