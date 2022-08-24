@@ -72,7 +72,7 @@ only_admin_access();
 
     <div class="card-body pt-3">
 
-        <a href="javascript:;" onClick="editBrowserRedirect(false)" class="btn btn-primary">
+        <a href="javascript:;" onClick="editBrowserRedirect(false)" class="btn btn-primary mb-sm-0 mb-2">
             <i class="fa fa-plus"></i> &nbsp; <?php echo _e('Add new browser redirect');?>
         </a>
 
@@ -82,15 +82,15 @@ only_admin_access();
 
         <div style="margin-top: 15px;">
 
-            <table class="table">
+            <table class="table table-responsive">
                 <thead>
                 <tr>
-                    <th><?php echo _e('Redirect from URL');?></th>
-                    <th><?php echo _e('Redirect to URL');?></th>
-                    <th><?php echo _e('Redirect Browsers');?></th>
-                    <th><?php echo _e('Redirect code');?></th>
-                    <th><?php echo _e('Enabled');?></th>
-                    <th><?php echo _e('Action');?></th>
+                    <th scope="col"><?php echo _e('Redirect from URL');?></th>
+                    <th scope="col"><?php echo _e('Redirect to URL');?></th>
+                    <th scope="col"><?php echo _e('Redirect Browsers');?></th>
+                    <th scope="col"><?php echo _e('Redirect code');?></th>
+                    <th scope="col"><?php echo _e('Enabled');?></th>
+                    <th scope="col"><?php echo _e('Action');?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -101,20 +101,20 @@ only_admin_access();
                 ?>
                 <tr class="js-browser-redirect-tr-<?php echo $browserRedirect['id']; ?>">
                     <td><?php echo $browserRedirect['redirect_from_url']; ?></td>
-                    <td><?php echo $browserRedirect['redirect_to_url']; ?></td>
-                    <td><?php echo $browserRedirect['redirect_browsers']; ?></td>
-                    <td><?php echo $browserRedirect['redirect_code']; ?></td>
-                    <td>
+                    <th scope="row"><?php echo $browserRedirect['redirect_to_url']; ?></th>
+                    <th scope="row"><?php echo $browserRedirect['redirect_browsers']; ?></th>
+                    <th scope="row"><?php echo $browserRedirect['redirect_code']; ?></th>
+                    <th scope="row">
                         <?php if ($browserRedirect['active']): ?>
                         <?php echo _e('Yes');?>
                         <?php else: ?>
                             <?php echo _e('No');?>
                         <?php endif; ?>
-                    </td>
-                    <td>
-                        <a href="javascript:;" onClick="editBrowserRedirect('<?php echo $browserRedirect['id']; ?>')" class="btn btn-primary"><span class="mw-icon-pen"></span> &nbsp; <?php echo _e('Edit');?></a>
-                        <a href="javascript:;" onClick="deleteBrowserRedirect('<?php echo $browserRedirect['id']; ?>')" class="btn btn-primary"><span class="fa fa-times"></span> &nbsp; <?php echo _e('Delete');?></a>
-                    </td>
+                    </th>
+                    <th scope="row" class="d-flex align-items-center">
+                        <a href="javascript:;" onClick="editBrowserRedirect('<?php echo $browserRedirect['id']; ?>')" ><span class="mw-icon-pen" style="font-size: 20px;"></span> </a>
+                        <a href="javascript:;" onClick="deleteBrowserRedirect('<?php echo $browserRedirect['id']; ?>')" ><span class="fa fa-times text-danger ms-3" style="font-size: 20px;"></span></a>
+                    </th>
                 </tr>
                 <?php endforeach; ?>
                 <?php else: ?>
@@ -126,7 +126,7 @@ only_admin_access();
                 </tbody>
             </table>
 
-            <a class="btn btn-primary" style="float:right;margin-top:15px;margin-right:22px;margin-bottom: 15px" onclick="deleteAll()"><span class="fa fa-times"></span> &nbsp;Delete all redirects</a>
+            <a class="btn btn-primary btn-danger" style="float:right;margin-top:15px;margin-right:22px;margin-bottom: 15px" onclick="deleteAll()"><span class="fa fa-times"></span> &nbsp;Delete all redirects</a>
         </div>
 
     </div>
