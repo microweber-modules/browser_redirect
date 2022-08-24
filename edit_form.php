@@ -94,7 +94,8 @@ if (isset($_GET['id'])) {
             </li>
         </ul>
     </div>
-    <div class="mw-ui-field-holder">
+    <a class="btn-link" href="javascript:$('#redirect_advanced_toggle').toggle()">Advanced options</a>
+    <div class="mw-ui-field-holder" id="redirect_advanced_toggle" style="display: none">
         <label class="mw-ui-label">Redirect Browsers</label>
         <div class="mw-ui-box mw-ui-box-content">
             <ul class="mw-ui-inline-list">
